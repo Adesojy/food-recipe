@@ -52,7 +52,7 @@
 </body>
 
 <script>
-    function validatePassword() {
+function validatePassword() {
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirm_password").value;
     var errorElement = document.getElementById("password-error");
