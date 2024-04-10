@@ -1,38 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php include "header.php"; ?>
+<?php
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Seekers Landing Page</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Custom CSS -->
-    <style>
-        /* Add your custom CSS styles here */
-    </style>
-</head>
+<!-- ##### Breadcumb Area Start ##### -->
+<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/bg-img/breadcumb1.jpg);">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12">
+                <div class="breadcumb-text text-center">
+                    <h2>Popular Receipies</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ##### Breadcumb Area End ##### -->
 
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Recipe Seekers</a>
-    </nav>
+<!-- ##### Best Receipe Area Start ##### -->
+<section class="best-receipe-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-heading">
+                    <!-- <h3>The best Receipies</h3> -->
+                </div>
+            </div>
+        </div>
 
-    <!-- Main Content -->
-    <div class="container mt-4">
-        <h2>Recipes</h2>
+        <div class="row" id="popular-recipe-containers">
+            <!-- Single Best Receipe Area -->
+            <!-- Popular recipe cards will be dynamically added here -->
+        </div>
+    </div>
+</section>
+<!-- ##### Best Receipe Area End ##### -->
+
+
+<!-- ##### Breadcumb Area Start ##### -->
+<div class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/bg-img/breadcumb1.jpg);">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12">
+                <div class="breadcumb-text text-center">
+                    <h2>All Recipes</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ##### Breadcumb Area End ##### -->
+
+<!-- ##### All Receipe Area Start ##### -->
+<section class="best-receipe-area">
+    <div class="container">
+        <!-- <h2>All Recipes</h2> -->
+        <br>
+        <br>
         <!-- Filters -->
         <div class="row mb-4">
             <div class="col-md-4">
                 <label for="location">Location:</label>
-                <input type="text" class="form-control" id="location" placeholder="Enter location">
+                <select class="form-control" id="location">
+                    <option value="">Select location</option>
+                </select>
             </div>
             <div class="col-md-4">
                 <label for="category">Category:</label>
                 <select class="form-control" id="category">
                     <option value="">Select category</option>
-                    <!-- Add options for different categories -->
+                    <!-- Categories will be dynamically added here -->
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="popularity">Popularity:</label>
+                <select class="form-control" id="popularity">
+                    <option value="">Select popularity</option>
+                    <option value="most_popular">Most Popular</option>
+                    <option value="least_popular">Least Popular</option>
                 </select>
             </div>
         </div>
@@ -47,123 +94,50 @@
             </ul>
         </nav>
     </div>
+</section>
+<!-- ##### All Receipe Area End ##### -->
 
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Custom Script -->
-    <script>
-        $(document).ready(function() {
-            // Function to fetch and display recipes
-            function fetchRecipes(page, location, category) {
-                // Clear previous recipe cards
-                $('#recipe-container').empty();
-                // Send AJAX request to fetch recipes
-                $.ajax({
-                    url: 'backend/fetch_recipe_data.php', // Replace with the actual URL of your server-side script
-                    method: 'GET',
-                    data: {
-                        page: page,
-                        location: location,
-                        category: category
-                    },
-                    success: function(data) {
-                        // console.log('Response from server:', data); // Add this line for debugging
+<!-- ##### Quote Subscribe Area Start ##### -->
+<section class="quote-subscribe-adds">
+    <div class="container">
+        <div class="row align-items-end">
+            <!-- Quote -->
+            <div class="col-12 col-lg-4">
+                <div class="quote-area text-center">
+                    <span>"</span>
+                    <h4>Nothing is better than going home to family and eating good food and relaxing</h4>
+                    <p>John Smith</p>
+                    <div class="date-comments d-flex justify-content-between">
+                        <div class="date">January 04, 2018</div>
+                        <div class="comments">2 Comments</div>
+                    </div>
+                </div>
+            </div>
 
-                        try {
-                            // Attempt to parse the response as JSON
-                            var recipes = JSON.parse(data);
+            <!-- Newsletter -->
+            <div class="col-12 col-lg-4">
+                <div class="newsletter-area">
+                    <h4>Subscribe to our newsletter</h4>
+                    <!-- Form -->
+                    <div class="newsletter-form bg-img bg-overlay" style="background-image: url(img/bg-img/bg1.jpg);">
+                        <form action="#" method="post">
+                            <input type="email" name="email" placeholder="Subscribe to newsletter">
+                            <button type="submit" class="btn delicious-btn w-100">Subscribe</button>
+                        </form>
+                        <!--<p>Fusce nec ante vitae lacus aliquet vulputate. Donec sceleri sque accumsan molestie. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia.</p>-->
+                    </div>
+                </div>
+            </div>
 
-                            // Check if parsed data is an array
-                            if (Array.isArray(recipes)) {
-                                // Get the container element where we will append the recipe cards
-                                var recipeContainer = document.getElementById('recipe-container');
+            <!-- Adds -->
+            <div class="col-12 col-lg-4">
+                <div class="delicious-add">
+                    <img src="img/bg-img/add.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ##### Quote Subscribe Area End ##### -->
 
-                                // Clear the existing content of the container
-                                recipeContainer.innerHTML = '';
-
-                                // Loop through each recipe
-                                recipes.forEach(function(recipe) {
-                                    // Create elements for recipe card
-                                    var cardDiv = document.createElement('div');
-                                    cardDiv.classList.add('col-md-4');
-
-                                    var cardInnerDiv = document.createElement('div');
-                                    cardInnerDiv.classList.add('card', 'mb-4');
-
-                                    var cardImg = document.createElement('img');
-                                    cardImg.classList.add('card-img-top');
-                                    cardImg.src = 'backend/uploads/' + recipe.recipe_image; // Assuming recipe_image is the image path
-                                    cardImg.alt = 'Recipe Image';
-
-                                    var cardBodyDiv = document.createElement('div');
-                                    cardBodyDiv.classList.add('card-body');
-
-                                    var cardTitle = document.createElement('h5');
-                                    cardTitle.classList.add('card-title');
-                                    cardTitle.textContent = recipe.title;
-
-                                    var cardText = document.createElement('p');
-                                    cardText.classList.add('card-text');
-                                    cardText.textContent = recipe.description;
-
-                                    var viewRecipeBtn = document.createElement('a');
-                                    viewRecipeBtn.classList.add('btn', 'btn-secondary');
-                                    viewRecipeBtn.href = 'view_recipe.php?id=' + recipe.id; // Assuming recipe_id is the primary key
-                                    viewRecipeBtn.textContent = 'View Recipe';
-
-                                    // Append elements to build the card
-                                    cardBodyDiv.appendChild(cardTitle);
-                                    cardBodyDiv.appendChild(cardText);
-                                    cardBodyDiv.appendChild(viewRecipeBtn);
-                                    cardInnerDiv.appendChild(cardImg);
-                                    cardInnerDiv.appendChild(cardBodyDiv);
-                                    cardDiv.appendChild(cardInnerDiv);
-
-                                    // Append the card to the recipe container
-                                    recipeContainer.appendChild(cardDiv);
-                                });
-                            } else {
-                                console.error('Response from server is not an array:', recipes);
-                            }
-                        } catch (error) {
-                            console.error('Error parsing JSON:', error);
-                        }
-                    },
-
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching recipes:', error);
-                    }
-                });
-            }
-            // Event listener for location input
-            $('#location').on('input', function() {
-                var location = $(this).val();
-                var category = $('#category').val();
-                fetchRecipes(1, location, category); // Fetch recipes for the first page
-            });
-
-            // Event listener for category select
-            $('#category').on('change', function() {
-                var location = $('#location').val();
-                var category = $(this).val();
-                fetchRecipes(1, location, category); // Fetch recipes for the first page
-            });
-
-            // Event listener for pagination links
-            $(document).on('click', '.pagination .page-link', function(e) {
-                e.preventDefault();
-                var page = $(this).data('page');
-                var location = $('#location').val();
-                var category = $('#category').val();
-                fetchRecipes(page, location, category); // Fetch recipes for the selected page
-            });
-
-            // Initial fetch recipes on page load
-            fetchRecipes(1, '', '');
-        });
-    </script>
-</body>
-
-</html>
+<?php include "footer.php"; ?>

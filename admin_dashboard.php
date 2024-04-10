@@ -9,18 +9,22 @@ include 'includes/conn.php';
 $sql = "SELECT 
             (SELECT COUNT(*) FROM users WHERE role = 'cook') AS num_cooks,
             (SELECT COUNT(*) FROM recipes) AS num_recipes,
-            (SELECT COUNT(*) FROM users WHERE role = 'recipe_seeker') AS num_recipe_seekers";
+            (SELECT COUNT(*) FROM users WHERE role = 'recipe_seeker') AS num_recipe_seekers,
+            COUNT(DISTINCT location) AS num_unique_locations
+        FROM recipes";
 $result = $conn->query($sql);
+
+$num_cooks = 0;
+$num_recipes = 0;
+$num_recipe_seekers = 0;
+$num_unique_locations = 0;
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $num_cooks = $row['num_cooks'];
     $num_recipes = $row['num_recipes'];
     $num_recipe_seekers = $row['num_recipe_seekers'];
-} else {
-    $num_cooks = 0;
-    $num_recipes = 0;
-    $num_recipe_seekers = 0;
+    $num_unique_locations = $row['num_unique_locations'];
 }
 ?>
 <!DOCTYPE html>
@@ -48,6 +52,9 @@ if ($result->num_rows > 0) {
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="btn btn-info ml-2" href="list-recipes.php">Recipes</a>
+                </li>
                 <li class="nav-item">
                     <a class="btn btn-danger ml-2" href="backend/logout.php">Logout</a>
                 </li>
@@ -78,8 +85,8 @@ if ($result->num_rows > 0) {
             <div class="col-sm-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Number of Recipe Seekers</h5>
-                        <p class="card-text"><?php echo $num_recipe_seekers; ?></p>
+                        <h5 class="card-title">Number of Unique Locations</h5>
+                        <p class="card-text"><?php echo $num_unique_locations; ?></p>
                     </div>
                 </div>
             </div>
@@ -94,13 +101,73 @@ if ($result->num_rows > 0) {
     </div>
 
     <footer class="py-3 my-4">
-        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
-        </ul>
-        <p class="text-center text-muted">© 2022 Company, Inc</p>
+        <!--<ul class="nav justify-content-center border-bottom pb-3 mb-3">-->
+        <!--    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>-->
+        <!--    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>-->
+        <!--    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>-->
+        <!--    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>-->
+        <!--    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>-->
+        <!--</ul>-->
+        <p class="text-center text-muted">© 2024</p>
     </footer>
-    
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Custom Script -->
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([0, 0], 2);
+
+        // Add a tile layer (you can choose different tile layers)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Fetch recipe data from the server
+        $.ajax({
+            url: 'backend/fetch_recipe_data.php', // Replace with the actual URL of your server-side script
+            method: 'GET',
+            success: function(data) {
+                // Parse recipe data
+                var recipes = JSON.parse(data);
+
+                // Loop through each recipe
+                recipes.forEach(function(recipe) {
+                    // Perform geocoding for each recipe location
+                    var location = encodeURIComponent(recipe.location); // Encode location for URL
+                    $.ajax({
+                        url: 'https://api.opencagedata.com/geocode/v1/json?q=' + location + '&key=49f423ff5ea7487a9f77b2cd810b415d',
+                        method: 'GET',
+                        success: function(geodata) {
+                            // Extract latitude and longitude from geocoding response
+                            var lat = geodata.results[0].geometry.lat;
+                            var lng = geodata.results[0].geometry.lng;
+
+                            // Create marker and add it to the map
+                            L.marker([lat, lng]).addTo(map)
+                                .bindPopup(recipe.title)
+                                .openPopup();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error geocoding location:', error);
+                        }
+                    });
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching recipe data:', error);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
