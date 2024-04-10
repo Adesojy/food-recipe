@@ -1,9 +1,9 @@
 <?php
 include 'conn.php';
 
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// // Enable error reporting
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 // Check if the user is logged in and retrieve the user ID
 session_start();
@@ -20,13 +20,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $instruction = $_POST['instruction'];
+    $ingredients = $_POST['ingredients'];
     $location = $_POST['location'];
     $recipe_file = $_FILES['recipe_file']['name'];
     $recipe_image = $_FILES['recipe_image']['name'];
     $recipe_thumbnail = $_FILES['recipe_thumbnail']['name'];
-    // Debugging code
-    var_dump($_POST['location']);
-
+    $category = $_POST['category'];
 
     // Move uploaded files to designated folders
     $target_dir = "uploads/";
@@ -35,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     move_uploaded_file($_FILES["recipe_thumbnail"]["tmp_name"], $target_dir . $recipe_thumbnail);
 
     // Insert new recipe into database
-    $sql = "INSERT INTO recipes (title, description, instruction, location, recipe_file, recipe_image, recipe_thumbnail, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO recipes (title, description, instruction, ingredients, location, recipe_file, recipe_image, recipe_thumbnail, user_id, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         // Print the error message and SQL query for debugging
@@ -43,7 +42,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "SQL: " . $sql;
         exit();
     }
-    $stmt->bind_param("sssssssi", $title, $description, $instruction, $location, $recipe_file, $recipe_image, $recipe_thumbnail, $user_id);
+    // $stmt->bind_param("sssssssis", $title, $description, $instruction, $ingredients, $location, $recipe_file, $recipe_image, $recipe_thumbnail, $user_id, $category);
+    // Bind parameters to the prepared statement
+    $stmt->bind_param("sssssssssi", $title, $description, $instruction, $ingredients, $location, $recipe_file, $recipe_image, $recipe_thumbnail, $user_id, $category);
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        // Print the error message and SQL query for debugging
+        echo "Error: " . $conn->error;
+        echo "SQL: " . $sql;
+        exit();
+    }
+    // $stmt->bind_param("sssssssi", $title, $description, $instruction, $ingredients, $location, $recipe_file, $recipe_image, $recipe_thumbnail, $user_id);
+    // Bind parameters to the prepared statement
+    $stmt->bind_param("sssssssssi", $title, $description, $instruction, $ingredients, $location, $recipe_file, $recipe_image, $recipe_thumbnail, $user_id, $category);
     if ($stmt->execute()) {
         // Recipe added successfully
         header("Location: ../cook_dashboard.php");
@@ -53,5 +64,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
-
-?>

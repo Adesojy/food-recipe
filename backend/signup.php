@@ -1,10 +1,6 @@
 <?php
 include 'conn.php';
 
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
@@ -14,20 +10,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $_POST['role'];
 
     // Check if username or email already exists
-    $sql = "SELECT * FROM users WHERE username='$username' OR email='$email'";
-    $result = $conn->query($sql);
+    $check_query = "SELECT * FROM users WHERE username=? OR email=?";
+    $check_stmt = $conn->prepare($check_query);
+    $check_stmt->bind_param("ss", $username, $email);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $error = "Username or email already exists.";
+    if ($check_result->num_rows > 0) {
+        // Username or email already exists
+        echo 'error: Username or email already exists.';
     } else {
-        $sql = "INSERT INTO users (first_name, last_name, email, username, password, role) 
-                VALUES ('$first_name', '$last_name', '$email', '$username', '$password', '$role')";
-        if ($conn->query($sql) === TRUE) {
-            header("Location: ../login.php");
-            exit();
+        // Insert new user into database
+        $insert_query = "INSERT INTO users (first_name, last_name, email, username, password, role) 
+                         VALUES (?, ?, ?, ?, ?, ?)";
+        $insert_stmt = $conn->prepare($insert_query);
+        $insert_stmt->bind_param("ssssss", $first_name, $last_name, $email, $username, $password, $role);
+        if ($insert_stmt->execute()) {
+            // Signup successful
+            echo 'success';
         } else {
-            $error = "Error: " . $conn->error;
+            // Error inserting user
+            echo 'error: Unable to insert user into database.';
         }
     }
 }
+
 ?>

@@ -2,7 +2,7 @@
 include 'conn.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $recipe_id = $_POST['id'];
+    $recipe_id = $_POST['recipe_id'];
 
     $sql = "SELECT * FROM recipes WHERE recipe_id = ?";
     $stmt = $conn->prepare($sql);
@@ -16,5 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo json_encode(array('error' => 'Recipe not found'));
     }
+} else {
+    echo json_encode(array('error' => 'Invalid request method'));
 }
 ?>
